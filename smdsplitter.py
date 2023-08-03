@@ -15,10 +15,20 @@ def startNewPart(fileName, partIndex, sourceLines, trianglesIndexStart):
     for i in range(0, trianglesIndexStart):
         outputFile.write(sourceLines[i])
 
+    print("$body \"{0}_{1}\" \"{0}_{1}\"".format(baseName, partIndex))
+
     return outputFile        
 
 
 def splitFile(fileName, max_poly):
+
+    if max_poly == None:   
+        while True:
+            try:
+                max_poly = int(input("Enter polygons limit per bodypart:"))
+                break
+            except:
+                continue
 
     fileHandle = open(fileName, "rt")
     lines = fileHandle.readlines()
@@ -52,6 +62,8 @@ def splitFile(fileName, max_poly):
 
     file.write("end\n")
     file.close()
+
+    input("Done! Press any key to exit");
 
 
 
