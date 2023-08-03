@@ -1,6 +1,7 @@
 import os
 import os.path
 import argparse
+import keyboard
 
 def startNewPart(fileName, partIndex, sourceLines, trianglesIndexStart):
     
