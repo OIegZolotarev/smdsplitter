@@ -8,8 +8,8 @@
             "name": "Python: текущий файл",
             "type": "python",
             "request": "launch",
-            "args": ["test.smd", "--max_poly", "2048"],
-            "program": "smdsplitter.py",
+            "args": ["--max_poly", "1024", "collection.smd"],
+            "program": "smdsplitter.py",            
             "console": "integratedTerminal",
             "justMyCode": true
         }

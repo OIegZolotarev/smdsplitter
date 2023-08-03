@@ -4,15 +4,16 @@ import argparse
 
 def startNewPart(fileName, partIndex, sourceLines, trianglesIndexStart):
     
-    baseName = os.path.basename(fileName)    
-    dir = os.path.dirname(file)
+    baseName = os.path.basename(fileName)[:-4]
+    absPath = os.path.abspath(fileName)
+    dir = os.path.dirname(absPath)
 
     outputName = "{0}/{1}_{2}.smd".format(dir, baseName, partIndex)
 
-    outputFile = open(path, "wt")
+    outputFile = open(outputName, "wt")
 
-    for i in (0, trianglesIndexStart):
-        outputFile.write(sourceLines[i] + "\n")
+    for i in range(0, trianglesIndexStart):
+        outputFile.write(sourceLines[i])
 
     return outputFile        
 
@@ -22,31 +23,34 @@ def splitFile(fileName, max_poly):
     fileHandle = open(fileName, "rt")
     lines = fileHandle.readlines()
 
-    trianglesIndexStart = lines.index("triangles")
+    trianglesIndexStart = lines.index("triangles\n") + 1
     partsCount = 0
     polyCount = 0
 
-    linesToWrite = (len(lines) - trianglesIndexStart) / 4
+    polyToWrite = (int)(((len(lines) - 1) - (trianglesIndexStart)) / 4)
 
-    file = startNewPart(fileName, partsCount, sourceLines, trianglesIndexStart)
+    file = startNewPart(fileName, partsCount, lines, trianglesIndexStart)
 
-    for i in (0, linesToWrite):
+    for i in range(0, polyToWrite):
 
         offset = (i * 4) + trianglesIndexStart
 
-        file.write(lines[offset] + "\n")
-        file.write(lines[offset + 1] + "\n")
-        file.write(lines[offset + 2] + "\n")
-        file.write(lines[offset + 3] + "\n")
+        file.write(lines[offset])
+        file.write(lines[offset + 1])
+        file.write(lines[offset + 2])
+        file.write(lines[offset + 3])
          
         polyCount += 1
 
         if (polyCount >= max_poly):
             partsCount += 1
-            file.close()
-            file = startNewPart(fileName, partsCount, sourceLines, trianglesIndexStart)
+            file.write("end\n")
+            file.close()            
+            file = startNewPart(fileName, partsCount, lines, trianglesIndexStart)
+            polyCount = 0
     
 
+    file.write("end\n")
     file.close()
 
 
@@ -57,12 +61,12 @@ parser = argparse.ArgumentParser(
                     epilog='Greetings to Xash3D Modding / Disscussion group!')
 
 parser.add_argument('filename')           # positional argument
-parser.add_argument('-m', '--max_poly')      # option that takes a value
+parser.add_argument('-m', '--max_poly', type=int)      # option that takes a value
 
 
 args = parser.parse_args()
 
 if args.filename.strip() != "":
-    SplitFile(args.filename, args.max_poly)    
+    splitFile(args.filename, args.max_poly)    
 
 
