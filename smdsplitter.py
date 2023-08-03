@@ -15,17 +15,18 @@ def startNewPart(fileName, partIndex, sourceLines, trianglesIndexStart):
     for i in range(0, trianglesIndexStart):
         outputFile.write(sourceLines[i])
 
-    print("$body \"{0}_{1}\" \"{0}_{1}\"".format(baseName, partIndex))
-
     return outputFile        
 
 
 def splitFile(fileName, max_poly):
 
+    silentMode = True
+
     if max_poly == None:   
         while True:
             try:
                 max_poly = int(input("Enter polygons limit per bodypart:"))
+                silentMode = False
                 break
             except:
                 continue
@@ -63,9 +64,38 @@ def splitFile(fileName, max_poly):
     file.write("end\n")
     file.close()
 
-    input("Done! Press any key to exit");
+    if silentMode == False:
+
+        baseName = os.path.basename(fileName)[:-4]
+        
+        for i in range(0, partsCount + 1):
+            print("$body \"{0}_{1}\" \"{0}_{1}\"".format(baseName, i))
+
+        saveTemplate = input("Save QC template? (y/n)");
+    
+        if saveTemplate.lower() == "y":
+            absPath = os.path.dirname(os.path.abspath(fileName));
+            
+            fileName = input("File name ({0}.qc):".format(baseName))
+
+            if  fileName.strip() == "":
+                fileName = "{0}.qc".format(baseName)
+    
+            outputFile = open(absPath + "/" + fileName, "wt")
+            
+            for i in range(0, partsCount + 1):
+                outputFile.write("$body \"{0}_{1}\" \"{0}_{1}\"\n".format(baseName, i))
+
+            outputFile.close()
+
+    
 
 
+    else:
+        baseName = os.path.basename(fileName)[:-4]
+
+        for i in range(0, partsCount + 1):
+            print("$body \"{0}_{1}\" \"{0}_{1}\"".format(baseName, i))
 
 parser = argparse.ArgumentParser(
                     prog='SMD Splitter',
